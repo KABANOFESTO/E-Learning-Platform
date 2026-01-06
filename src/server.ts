@@ -1,0 +1,18 @@
+import 'dotenv/config';
+import express from 'express';
+import authRoutes from './routes/auth.routes';
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+const PREFIX = process.env.PREFIX || '/api/v1';
+
+app.use(express.json());
+app.use(`${PREFIX}/auth`, authRoutes);
+
+app.get('/', (req, res) => res.send('E-Learning Platform API'));
+
+app.listen(PORT, () => {
+	console.log(`Server running on port ${PORT}`);
+});
+
+export default app;
