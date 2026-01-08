@@ -1,7 +1,7 @@
 import { registerUser, loginUser } from '../services/auth.service';
 import { registerSchema, loginSchema } from '../validators/auth.validator';
 import { Request, Response } from 'express';
-import passport from '../helpers/passport.helper';
+// import passport from '../helpers/passport.helper';
 
 export async function register(req: Request, res: Response) {
 	try {
