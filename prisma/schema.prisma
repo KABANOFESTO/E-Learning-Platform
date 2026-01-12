@@ -1,3 +1,20 @@
+model Company {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  email       String   @unique
+  address     String
+  phone       String
+  status      CompanyStatus @default(PENDING)
+  reason      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum CompanyStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,4 +36,10 @@ model User {
   password       String
   profilePicture String
   role           Role        @default(learner)
+}
+
+model Course {
+  id String @id @default(uuid())
+  name String 
+  
 }

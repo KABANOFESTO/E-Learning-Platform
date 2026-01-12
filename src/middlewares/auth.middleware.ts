@@ -12,3 +12,11 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
 		next();
 	});
 }
+
+export function isAdmin(req: Request, res: Response, next: NextFunction) {
+	const user = (req as any).user;
+	if (user.role !== 'admin') {
+		return res.status(403).json({ error: 'Access denied' });
+	}
+	next();
+}

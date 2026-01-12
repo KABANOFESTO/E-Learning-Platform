@@ -5,3 +5,6 @@ node_modules
 /generated/prisma
 # Ignore coverage reports
 coverage
+
+# Ignore build output
+dist

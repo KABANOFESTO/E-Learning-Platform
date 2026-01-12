@@ -10,7 +10,8 @@ describe('Auth API', () => {
       .post('/api/v1/auth/register')
       .field('name', 'Test User')
       .field('email', uniqueEmail)
-      .field('password', 'password123');
+      .field('password', 'password123')
+      .field('profilePicture', '');
     expect(res.statusCode).toBe(201);
     expect(res.body.user).toHaveProperty('id');
     expect(res.body.user.role).toBe('learner');
@@ -23,6 +24,9 @@ describe('Auth API', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('token');
     expect(res.body.user).toHaveProperty('id');
+    if (!res.body.user) {
+      expect(res.body.user).toBeDefined();
+    }
   });
 });
 
