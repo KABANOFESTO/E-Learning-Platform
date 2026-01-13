@@ -1,4 +1,3 @@
-
 import request from 'supertest';
 import app, { server } from '../server';
 import { prisma } from '../models/user.model';
@@ -27,6 +26,53 @@ describe('Auth API', () => {
     if (!res.body.user) {
       expect(res.body.user).toBeDefined();
     }
+  });
+
+  it('should return 400 for invalid registration data', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/register')
+      .field('name', '') // invalid name
+      .field('email', 'not-an-email') // invalid email
+      .field('password', '123') // too short
+      .field('profilePicture', 'not-a-url');
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error');
+  });
+
+  it('should return 400 for duplicate email registration', async () => {
+    const email = 'duplicate@example.com';
+    // Register once
+    await request(app)
+      .post('/api/v1/auth/register')
+      .field('name', 'Dup User')
+      .field('email', email)
+      .field('password', 'password123')
+      .field('profilePicture', '');
+    // Register again with same email
+    const res = await request(app)
+      .post('/api/v1/auth/register')
+      .field('name', 'Dup User')
+      .field('email', email)
+      .field('password', 'password123')
+      .field('profilePicture', '');
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error');
+  });
+
+  it('should return 400 for invalid login data', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'not-an-email', password: '' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error');
+  });
+
+  it('should return 400 for wrong login credentials', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'doesnotexist@example.com', password: 'wrongpass' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error');
   });
 });
 

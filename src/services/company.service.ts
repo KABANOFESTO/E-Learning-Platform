@@ -19,10 +19,23 @@ export async function approveCompany(companyId: string) {
 }
 
 export async function rejectCompany(companyId: string, reason: string) {
-	const company = await prisma.company.update({
+	// Find the company first
+	const company = await prisma.company.findUnique({ where: { id: companyId } });
+	if (!company) {
+		const error: any = new Error('Company not found');
+		error.status = 404;
+		throw error;
+	}
+	// If company exists but is not PENDING, return 400
+	if (company.status !== 'PENDING') {
+		const error: any = new Error('Only PENDING companies can be rejected');
+		error.status = 400;
+		throw error;
+	}
+	const updatedCompany = await prisma.company.update({
 		where: { id: companyId },
 		data: { status: 'REJECTED', reason },
 	});
-	await sendRejectionEmail(company.email, reason);
-	return company;
+	await sendRejectionEmail(updatedCompany.email, reason);
+	return updatedCompany;
 }
